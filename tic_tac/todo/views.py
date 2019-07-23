@@ -7,9 +7,11 @@ from django.views.decorators.http import require_POST
 def index(request):
 	todo_list = Todo.objects.order_by('id')
 	form = TodoForm()
+	percent = progressBar()
 
 	context = {'todo_list': todo_list,
-				'form': form}
+				'form': form,
+				'percent': percent}
 
 	return render(request, 'index.html', context)
 
@@ -39,3 +41,11 @@ def deleteAll(request):
 	Todo.objects.all().delete()
 
 	return redirect('index')
+
+def progressBar():
+	completed_tasks= (Todo.objects.filter(complete__exact=True)).count()
+	all_tasks = (Todo.objects.all()).count()
+	if all_tasks != 0:
+		return (completed_tasks/all_tasks)*100
+	return 0
+
